@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PluginDefinition.cpp">
+    <ClCompile Include="NppDocIt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NppDocIt.cpp">
+    <ClCompile Include="PluginDefinition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,22 +29,20 @@
     <ClInclude Include="Notepad_plus_msgs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\pcre.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="PluginDefinition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PluginInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DockingFeature\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Scintilla.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resource.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

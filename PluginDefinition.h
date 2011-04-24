@@ -17,7 +17,7 @@
 
 #ifndef PLUGINDEFINITION_H
 #define PLUGINDEFINITION_H
-
+#define PCRE_STATIC
 //
 // All difinitions of plugin interface
 //

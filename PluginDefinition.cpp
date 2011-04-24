@@ -18,8 +18,8 @@
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
 #include <iostream>
-#include <pcre.h>
-#define OVECCOUNT 30
+#include "pcre.h"
+#define OVECCOUNT 60
 
 //
 // The plugin data that Notepad++ needs
@@ -290,7 +290,8 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 
 void removeCRLF(std::string *str)
 {
-	for(int i=0;i<(str->length());i++)
+	
+	for(int i=0;i<((int)str->length());i++)
 	{
 		if(str->at(i)=='\r' || str->at(i)=='\n')
 		{
