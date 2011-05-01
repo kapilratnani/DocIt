@@ -148,32 +148,32 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 	if (rc < 0)
 	{
 		doc_string.append(indent_spaces);
-		doc_string.append("/*\n");
+		doc_string.append("/*\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" */\n");
+		doc_string.append(" */\r\n");
 		return doc_string;
 	}
 
 	const char *ret=NULL;
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"func_name",&ret);
 	doc_string.append(indent_spaces);
-	doc_string.append("/*\n");
+	doc_string.append("/*\r\n");
 	doc_string.append(indent_spaces);
 	doc_string.append(" * Name         : ");
 	doc_string.append(ret);
-	doc_string.append("\n");
+	doc_string.append("\r\n");
 	doc_string.append(indent_spaces);
-	doc_string.append(" *\n");
+	doc_string.append(" *\r\n");
 
 	pcre_free_substring(ret);
 
@@ -181,11 +181,11 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 	doc_string.append(" * Synopsis     : ");
 	pcre_get_substring(func_string,ovector,OVECCOUNT,0,&ret);
 	doc_string.append(ret);
-	doc_string.append("\n");
+	doc_string.append("\r\n");
 	pcre_free_substring(ret);
 	
 	doc_string.append(indent_spaces);
-	doc_string.append(" *\n");
+	doc_string.append(" *\r\n");
 
 
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"func_args",&ret);
@@ -247,21 +247,21 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 			{
 				break;
 			}
-			doc_string.append("\n");
+			doc_string.append("\r\n");
 			doc_string.append(indent_spaces);
 			doc_string.append(" *                ");
 		}
-		doc_string.append("\n");
+		doc_string.append("\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 	}
 
 	pcre_free_substring(ret);
 
 	doc_string.append(indent_spaces);
-	doc_string.append(" * Description  : \n");
+	doc_string.append(" * Description  : \r\n");
 	doc_string.append(indent_spaces);
-	doc_string.append(" * \n");
+	doc_string.append(" * \r\n");
 	doc_string.append(indent_spaces);
 	
 	//get return type
@@ -278,9 +278,9 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 
 	pcre_free_substring(ret);
 
-	doc_string.append("\n");
+	doc_string.append("\r\n");
 	doc_string.append(indent_spaces);
-	doc_string.append(" */\n");
+	doc_string.append(" */\r\n");
 
 	pcre_free(re);
 	pcre_free(re2);
@@ -337,19 +337,19 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 	if (rc < 0)
 	{
 		doc_string.append(indent_spaces);
-		doc_string.append("/*\n");
+		doc_string.append("/*\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" */\n");
+		doc_string.append(" */\r\n");
 		return doc_string;
 	}
 
@@ -358,13 +358,13 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 	if(strlen(ret)>0)
 	{
 		doc_string.append(indent_spaces);
-		doc_string.append("/*\n");
+		doc_string.append("/*\r\n");
 		doc_string.append(indent_spaces);
 		doc_string.append(" * Name         : ");
 		doc_string.append(ret);
-		doc_string.append("\n");
+		doc_string.append("\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 	}
 	pcre_free_substring(ret);
 
@@ -372,13 +372,13 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 	if(strlen(ret)>0)
 	{
 		doc_string.append(indent_spaces);
-		doc_string.append("/*\n");
+		doc_string.append("/*\r\n");
 		doc_string.append(indent_spaces);
 		doc_string.append(" * Method Name  : ");
 		doc_string.append(ret);
-		doc_string.append("\n");
+		doc_string.append("\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 	}
 	pcre_free_substring(ret);
 
@@ -394,7 +394,7 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 	pcre_free_substring(ret);
 	
 	doc_string.append(indent_spaces);
-	doc_string.append(" *\n");
+	doc_string.append(" *\r\n");
 
 
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"func_args",&ret);
@@ -456,21 +456,21 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 			{
 				break;
 			}
-			doc_string.append("\n");
+			doc_string.append("\r\n");
 			doc_string.append(indent_spaces);
 			doc_string.append(" *                ");
 		}
-		doc_string.append("\n");
+		doc_string.append("\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 	}
 
 	pcre_free_substring(ret);
 
 	doc_string.append(indent_spaces);
-	doc_string.append(" * Description  : \n");
+	doc_string.append(" * Description  : \r\n");
 	doc_string.append(indent_spaces);
-	doc_string.append(" * \n");
+	doc_string.append(" * \r\n");
 	
 	//get return type
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"ret_type",&ret);
@@ -483,12 +483,12 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 		pcre_free_substring(ret);
 		pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"pointer",&ret);
 		doc_string.append(ret);
-		doc_string.append("\n");
+		doc_string.append("\r\n");
 	}
 
 	pcre_free_substring(ret);
 	doc_string.append(indent_spaces);
-	doc_string.append(" */\n");
+	doc_string.append(" */\r\n");
 
 	pcre_free(re);
 	pcre_free(re2);
@@ -532,29 +532,29 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 	if (rc < 0)
 	{
 		doc_string.append(indent_spaces);
-		doc_string.append("/**\n");
+		doc_string.append("/**\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\n");
+		doc_string.append(" *\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" */\n");
+		doc_string.append(" */\r\n");
 		return doc_string;
 	}
 
 	const char *ret=NULL;
 	doc_string.append(indent_spaces);
-	doc_string.append("/**\n");
+	doc_string.append("/**\r\n");
 	doc_string.append(indent_spaces);
-	doc_string.append(" * \n");
+	doc_string.append(" * \r\n");
 	doc_string.append(indent_spaces);
-	doc_string.append(" * \n");
+	doc_string.append(" * \r\n");
 	
 
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"func_args",&ret);
@@ -589,7 +589,7 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 			doc_string.append(indent_spaces);
 			doc_string.append(" * @param ");
 			doc_string.append(ret1);
-			doc_string.append(" \n");
+			doc_string.append(" \r\n");
 			pcre_free_substring(ret1);
 			
 			offset1=ovector2[1];
@@ -623,7 +623,7 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 		doc_string.append(indent_spaces);
 		doc_string.append(" * @return ");
 		doc_string.append(ret);
-		doc_string.append("\n");
+		doc_string.append("\r\n");
 	}
 	pcre_free_substring(ret);
 
@@ -640,13 +640,13 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 			doc_string.append(indent_spaces);
 			doc_string.append(" * @throws ");
 			doc_string.append(exception_name);
-			doc_string.append("\n");
+			doc_string.append("\r\n");
 			exception_name=strtok(NULL,",");
 		}
 	}
 
 	doc_string.append(indent_spaces);
-	doc_string.append(" */\n");
+	doc_string.append(" */\r\n");
 
 	pcre_free(re);
 	pcre_free(re2);
@@ -690,7 +690,6 @@ void insert_doc_string()
 	char *buf=new char[len];
 	::SendMessage(curScintilla,SCI_GETCURLINE,len,(LPARAM)buf);
 
-	
 	int curPos=::SendMessage(curScintilla,SCI_GETCURRENTPOS,0,0);
 	int curLine=::SendMessage(curScintilla,SCI_LINEFROMPOSITION,curPos,0);
 	int indentation=::SendMessage(curScintilla,SCI_GETLINEINDENTATION,curLine,0);
@@ -700,13 +699,6 @@ void insert_doc_string()
 	//parse the string and if a valid function generate a doc string.
 	::SendMessage(curScintilla,SCI_INSERTTEXT,-1,(LPARAM)gen_doc_string_proxy(buf,indentation).c_str());	
 	delete buf;
-
-	//position cursor
-	/*int cur_pos=::SendMessageA(curScintilla,SCI_GETCURRENTPOS,0,0);
-	cur_pos+=5;
-	::SendMessageA(curScintilla,SCI_SETCURRENTPOS,cur_pos,0);
-	::SendMessageA(curScintilla,SCI_INSERTTEXT,-1,(LPARAM)"\t");
-	::SendMessageA(curScintilla,SCI_GOTOPOS,cur_pos+1,0);*/
 }
 
 
