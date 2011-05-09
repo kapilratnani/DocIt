@@ -495,6 +495,8 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 
 	return doc_string;
 }
+
+
 std::string gen_java_doc_string(char *func_string,int indentation)
 {
 	pcre *re;
