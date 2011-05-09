@@ -18,6 +18,7 @@
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
 #include <iostream>
+#include "Hyperlinks.h"
 #include "pcre.h"
 #define OVECCOUNT 60
 
@@ -31,11 +32,14 @@ FuncItem funcItem[nbFunc];
 //
 NppData nppData;
 
+HANDLE g_hMod;
+
 //
 // Initialize your plugin data here
 // It will be called while plugin loading   
 void pluginInit(HANDLE hModule)
 {
+	g_hMod=hModule;
 }
 
 //
@@ -704,7 +708,29 @@ void insert_doc_string()
 }
 
 
+
+INT_PTR CALLBACK abtDlgProc(HWND hwndDlg,UINT uMsg,WPARAM wParam, LPARAM lParam)
+{
+	switch(uMsg)
+	{
+	case WM_INITDIALOG:
+		ConvertStaticToHyperlink(hwndDlg,IDC_WEB);
+		return TRUE;
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case IDOK:
+			EndDialog(hwndDlg,wParam);
+			return TRUE;
+		case IDC_WEB:
+			ShellExecute(hwndDlg, TEXT("open"),TEXT("http://nppdocit.sourceforge.net/"),NULL, NULL, SW_SHOWNORMAL);
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 void show_about_dlg()
 {
-	::MessageBox(NULL, TEXT("Hello, Notepad++!"), TEXT("Notepad++ Plugin Template"), MB_OK);
+	::CreateDialog((HINSTANCE)g_hMod,MAKEINTRESOURCE(IDD_ABOUTDLG),nppData._nppHandle,abtDlgProc);
 }

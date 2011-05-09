@@ -2,6 +2,5 @@
 #define IDC_STATIC (-1)
 #endif
 
-#define IDD_DIALOG1                             100
-#define IDOK                                    1000
-#define IDCANCEL                                1001
+#define IDD_ABOUTDLG                            103
+#define IDC_WEB                                 1002
