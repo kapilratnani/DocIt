@@ -18,9 +18,16 @@
 #include "PluginDefinition.h"
 #include "menuCmdID.h"
 #include <iostream>
+#include <assert.h>
 #include "Hyperlinks.h"
 #include "pcre.h"
 #define OVECCOUNT 60
+#include "nppdocitplugin.h"
+#include <map>
+#include <iterator>
+
+BOOLEAN docitPluginsLoaded=FALSE;
+std::map<int, nppDocItPlugin*> pluginMap;
 
 //
 // The plugin data that Notepad++ needs
@@ -42,11 +49,23 @@ void pluginInit(HANDLE hModule)
 	g_hMod=hModule;
 }
 
+void unloadDocitPlugins()
+{
+	for(std::map<int,nppDocItPlugin*>::const_iterator ci=pluginMap.begin();ci != pluginMap.end();ci++)
+	{
+		nppDocItPlugin* plugin=ci->second;
+		FreeLibrary(plugin->hinstLib);
+		delete plugin;
+	}
+	pluginMap.clear();
+}
+
 //
 // Here you can do the clean up, save the parameters (if any) for the next session
 //
 void pluginCleanUp()
 {
+	unloadDocitPlugins();
 }
 
 //
@@ -187,7 +206,7 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 	doc_string.append(ret);
 	doc_string.append("\r\n");
 	pcre_free_substring(ret);
-	
+
 	doc_string.append(indent_spaces);
 	doc_string.append(" *\r\n");
 
@@ -206,15 +225,15 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 	rc1=0;
 	int offset1=0;
 	rc1 = pcre_exec(
-			re2, /* the compiled pattern */
-			NULL, /* no extra data - we didn't study the pattern */
-			ret, /* the subject string */
-			strlen(ret), /* the length of the subject */
-			offset1, /* start at offset 0 in the subject */
-			0, /* default options */
-			ovector2, /* output vector for substring information */
-			OVECCOUNT); /* number of elements in the output
-						vector */
+		re2, /* the compiled pattern */
+		NULL, /* no extra data - we didn't study the pattern */
+		ret, /* the subject string */
+		strlen(ret), /* the length of the subject */
+		offset1, /* start at offset 0 in the subject */
+		0, /* default options */
+		ovector2, /* output vector for substring information */
+		OVECCOUNT); /* number of elements in the output
+					vector */
 	if(rc1>0){
 		doc_string.append(indent_spaces);	
 		doc_string.append(" * Arguments    : ");
@@ -246,7 +265,7 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 				ovector2, /* output vector for substring information */
 				OVECCOUNT); /* number of elements in the output
 							vector */
-		 
+
 			if (rc1 < 0 || rc < 3)
 			{
 				break;
@@ -267,10 +286,10 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 	doc_string.append(indent_spaces);
 	doc_string.append(" * \r\n");
 	doc_string.append(indent_spaces);
-	
+
 	//get return type
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"ret_type",&ret);
-	
+
 	if(strcmp(ret,"void")!=0)
 	{
 		doc_string.append(" * Returns      : ");
@@ -278,11 +297,11 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 		pcre_free_substring(ret);
 		pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"pointer",&ret);
 		doc_string.append(ret);
+		doc_string.append("\r\n");
 	}
 
 	pcre_free_substring(ret);
 
-	doc_string.append("\r\n");
 	doc_string.append(indent_spaces);
 	doc_string.append(" */\r\n");
 
@@ -294,13 +313,32 @@ std::string gen_c_doc_string(char *func_string,int indentation)
 
 void removeCRLF(std::string *str)
 {
-	
+
 	for(int i=0;i<((int)str->length());i++)
 	{
 		if(str->at(i)=='\r' || str->at(i)=='\n')
 		{
 			str->replace(i,1,"\0");
 		}
+	}
+}
+
+void trim(std::string *str)
+{
+	for(int i=0;i<(int)str->length();i++)
+	{
+		if(str->at(i)==' ')
+			str->erase(i,1);
+		else
+			break;
+	}
+
+	for(int i=str->length()-1;i>=0;i--)
+	{
+		if(str->at(i)==' ')
+			str->erase(i,1);
+		else
+			break;
 	}
 }
 
@@ -396,7 +434,7 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 	doc_string.append(tmpStr);
 	//doc_string.append("\n");
 	pcre_free_substring(ret);
-	
+
 	doc_string.append(indent_spaces);
 	doc_string.append(" *\r\n");
 
@@ -415,15 +453,15 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 	rc1=0;
 	int offset1=0;
 	rc1 = pcre_exec(
-			re2, /* the compiled pattern */
-			NULL, /* no extra data - we didn't study the pattern */
-			ret, /* the subject string */
-			strlen(ret), /* the length of the subject */
-			offset1, /* start at offset 0 in the subject */
-			0, /* default options */
-			ovector2, /* output vector for substring information */
-			OVECCOUNT); /* number of elements in the output
-						vector */
+		re2, /* the compiled pattern */
+		NULL, /* no extra data - we didn't study the pattern */
+		ret, /* the subject string */
+		strlen(ret), /* the length of the subject */
+		offset1, /* start at offset 0 in the subject */
+		0, /* default options */
+		ovector2, /* output vector for substring information */
+		OVECCOUNT); /* number of elements in the output
+					vector */
 	if(rc1>0){
 		doc_string.append(indent_spaces);	
 		doc_string.append(" * Arguments    : ");
@@ -455,7 +493,7 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 				ovector2, /* output vector for substring information */
 				OVECCOUNT); /* number of elements in the output
 							vector */
-		 
+
 			if (rc1 < 0 || rc < 3)
 			{
 				break;
@@ -475,10 +513,10 @@ std::string gen_cpp_doc_string(char *func_string,int indentation)
 	doc_string.append(" * Description  : \r\n");
 	doc_string.append(indent_spaces);
 	doc_string.append(" * \r\n");
-	
+
 	//get return type
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"ret_type",&ret);
-	
+
 	if(strcmp(ret,"void")!=0)
 	{
 		doc_string.append(indent_spaces);
@@ -561,7 +599,7 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 	doc_string.append(" * \r\n");
 	doc_string.append(indent_spaces);
 	doc_string.append(" * \r\n");
-	
+
 
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"func_args",&ret);
 
@@ -577,27 +615,27 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 	rc1=0;
 	int offset1=0;
 	rc1 = pcre_exec(
-			re2, /* the compiled pattern */
-			NULL, /* no extra data - we didn't study the pattern */
-			ret, /* the subject string */
-			strlen(ret), /* the length of the subject */
-			offset1, /* start at offset 0 in the subject */
-			0, /* default options */
-			ovector2, /* output vector for substring information */
-			OVECCOUNT); /* number of elements in the output
-						vector */
+		re2, /* the compiled pattern */
+		NULL, /* no extra data - we didn't study the pattern */
+		ret, /* the subject string */
+		strlen(ret), /* the length of the subject */
+		offset1, /* start at offset 0 in the subject */
+		0, /* default options */
+		ovector2, /* output vector for substring information */
+		OVECCOUNT); /* number of elements in the output
+					vector */
 	if(rc1>0){	
 		while(rc1!=-1){
 
 			const char *ret1=NULL;
-			
+
 			pcre_get_named_substring(re2,ret,ovector2,OVECCOUNT,"arg_name",&ret1);
 			doc_string.append(indent_spaces);
 			doc_string.append(" * @param ");
 			doc_string.append(ret1);
 			doc_string.append(" \r\n");
 			pcre_free_substring(ret1);
-			
+
 			offset1=ovector2[1];
 
 			rc1 = pcre_exec(
@@ -610,7 +648,7 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 				ovector2, /* output vector for substring information */
 				OVECCOUNT); /* number of elements in the output
 							vector */
-		 
+
 			if (rc1 < 0 || rc < 3)
 			{
 				break;
@@ -620,10 +658,10 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 
 	pcre_free_substring(ret);
 
-	
+
 	//get return type
 	pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"ret_type",&ret);
-	
+
 	if(strcmp(ret,"void")!=0)
 	{
 		doc_string.append(indent_spaces);
@@ -643,9 +681,11 @@ std::string gen_java_doc_string(char *func_string,int indentation)
 		char *exception_name=strtok(tmp,",");
 		while(exception_name!=NULL)
 		{
+			std::string s(exception_name);
+			trim(&s);
 			doc_string.append(indent_spaces);
 			doc_string.append(" * @throws ");
-			doc_string.append(exception_name);
+			doc_string.append(s);
 			doc_string.append("\r\n");
 			exception_name=strtok(NULL,",");
 		}
@@ -667,24 +707,80 @@ std::string gen_doc_string_proxy(char *func_string,int indentation)
 
 	switch(lang_type)
 	{
-		case L_C:
-			return gen_c_doc_string(func_string,indentation);
-		case L_CPP:
-			return gen_cpp_doc_string(func_string,indentation);
-		case L_JAVA:
-			return gen_java_doc_string(func_string,indentation);
-		default:
-			return "";
+	case L_C:
+		return gen_c_doc_string(func_string,indentation);
+	case L_CPP:
+		return gen_cpp_doc_string(func_string,indentation);
+	case L_JAVA:
+		return gen_java_doc_string(func_string,indentation);
+	default:
+		return "";
 	}
 }
 
+void loadDocitPlugins()
+{
+	WIN32_FIND_DATA ffd;
+	HANDLE hFind=INVALID_HANDLE_VALUE;
+	TCHAR nppDir[MAX_PATH];
+	TCHAR findQuery[MAX_PATH];
+	TCHAR dllFilePath[MAX_PATH];
+	HINSTANCE hinstLib; 
 
+	::SendMessage(nppData._nppHandle,NPPM_GETNPPDIRECTORY,MAX_PATH,(LPARAM)nppDir);
+	wcscpy(findQuery,nppDir);
+	if(wcslen(nppDir)<MAX_PATH)
+	{
+		wcscat(findQuery,TEXT("\\plugins\\nppdocitplugins\\*.dll"));
+		hFind=FindFirstFile(findQuery,&ffd);
+		if(hFind!=INVALID_HANDLE_VALUE)
+		{
+			do
+			{
+				wcscpy(dllFilePath,nppDir);
+				wcscat(dllFilePath,TEXT("\\plugins\\nppdocitplugins\\"));
+				wcscat(dllFilePath,ffd.cFileName);
+				hinstLib=LoadLibrary(dllFilePath);			
+				if(hinstLib!=NULL)
+				{
+					nppDocItPlugin *plugin=new nppDocItPlugin;
+					plugin->hinstLib=hinstLib;
+					plugin->gen_doc_string=(GEN_DOC_STRING)GetProcAddress(hinstLib,"gen_doc_string");
+					plugin->get_lang_type=(GET_LANG_TYPE)GetProcAddress(hinstLib,"get_language_type");
+					plugin->get_terminating_character=(GET_TERMINATING_CHARACTER)GetProcAddress(hinstLib,"get_terminating_character");
+					pluginMap[(plugin->get_lang_type)()]=plugin;
+				}
+
+			}while(FindNextFile(hFind,&ffd)!=0);
+
+			FindClose(hFind);
+		}
+		docitPluginsLoaded=TRUE;	
+	}
+}
+
+nppDocItPlugin* getCurrentPlugin()
+{
+	enum LangType lang_type;
+	::SendMessage(nppData._nppHandle,NPPM_GETCURRENTLANGTYPE,0,(LPARAM)&lang_type);
+
+	nppDocItPlugin *plugin=pluginMap[lang_type];
+	return plugin;
+}
 
 //----------------------------------------------//
 //-- STEP 4. DEFINE YOUR ASSOCIATED FUNCTIONS --//
 //----------------------------------------------//
 void insert_doc_string()
 {
+	if(docitPluginsLoaded==FALSE)
+		loadDocitPlugins();
+
+	
+	nppDocItPlugin* plugin=getCurrentPlugin();
+	if(plugin==NULL)
+		return;
+
 	// Get the current scintilla
 	int which = -1;
 	::SendMessage(nppData._nppHandle, NPPM_GETCURRENTSCINTILLA, 0, (LPARAM)&which);
@@ -692,19 +788,46 @@ void insert_doc_string()
 		return;
 	HWND curScintilla = (which == 0)?nppData._scintillaMainHandle:nppData._scintillaSecondHandle;
 
-	size_t len=::SendMessage(curScintilla,SCI_GETCURLINE,0,0);
-	char *buf=new char[len];
-	::SendMessage(curScintilla,SCI_GETCURLINE,len,(LPARAM)buf);
-
+	//get current position and identation at current line
 	int curPos=::SendMessage(curScintilla,SCI_GETCURRENTPOS,0,0);
 	int curLine=::SendMessage(curScintilla,SCI_LINEFROMPOSITION,curPos,0);
 	int indentation=::SendMessage(curScintilla,SCI_GETLINEINDENTATION,curLine,0);
-	
-	//goto first line
-	::SendMessage(curScintilla,SCI_HOME,0,0);
-	//parse the string and if a valid function generate a doc string.
-	::SendMessage(curScintilla,SCI_INSERTTEXT,-1,(LPARAM)gen_doc_string_proxy(buf,indentation).c_str());	
-	delete buf;
+
+
+	//get the location till text is to be fetched
+	//search for { or ;
+	::SendMessage(curScintilla,SCI_SETTARGETSTART,curPos,0);
+	::SendMessage(curScintilla,SCI_SETTARGETEND,curPos+200,0);
+	::SendMessage(curScintilla,SCI_SETSEARCHFLAGS,SCFIND_REGEXP,0);
+	int pos=::SendMessage(curScintilla,SCI_SEARCHINTARGET,4,(LPARAM)(plugin->get_terminating_character)());
+	//This gives me the occurance of the terminating character, need to fetch the string up to 
+	//this location
+	Sci_TextRange tr;
+	tr.chrg.cpMin=curPos;
+	if(pos!=-1){
+		tr.chrg.cpMax=pos;
+		tr.lpstrText=new char[pos-curPos+1];
+
+		int len=::SendMessage(curScintilla,SCI_GETTEXTRANGE,0,(LPARAM)&tr);
+		if(len>0){
+			//goto first line
+			::SendMessage(curScintilla,SCI_HOME,0,0);
+			
+			//parse the string and if a valid function generate a doc string.
+			char *doc_string=NULL;
+			
+			(plugin->gen_doc_string)(tr.lpstrText,indentation,&doc_string);
+			::SendMessage(curScintilla,SCI_INSERTTEXT,-1,(LPARAM)doc_string);	
+			
+			delete tr.lpstrText;
+			//delete doc_string;
+		}
+	}
+
+
+	//TODO: think of a proper abstraction to define termination condition for a function of each language
+	//TODO: Reorganise the whole code
+
 }
 
 
