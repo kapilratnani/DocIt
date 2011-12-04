@@ -1,5 +1,4 @@
-//this file is part of notepad++
-//Copyright (C)2003 Don HO <donho@altern.org>
+//Copyright (C)2011 Kapil Ratnani <kapil.ratnani@iiitb.net>
 //
 //This program is free software; you can redistribute it and/or
 //modify it under the terms of the GNU General Public License
@@ -157,6 +156,7 @@ void loadDocitPlugins()
 				wcscpy(dllFilePath,nppDir);
 				wcscat(dllFilePath,TEXT("\\plugins\\nppdocitplugins\\"));
 				wcscat(dllFilePath,ffd.cFileName);
+
 				hinstLib=LoadLibrary(dllFilePath);			
 				if(hinstLib!=NULL)
 				{
@@ -190,6 +190,7 @@ nppDocItPlugin* getCurrentPlugin()
 //----------------------------------------------//
 void insert_doc_string()
 {
+	//load when required
 	if(docitPluginsLoaded==FALSE)
 		loadDocitPlugins();
 
@@ -217,7 +218,7 @@ void insert_doc_string()
 	::SendMessage(curScintilla,SCI_SETTARGETEND,curPos+200,0);
 	::SendMessage(curScintilla,SCI_SETSEARCHFLAGS,SCFIND_REGEXP,0);
 	int pos=::SendMessage(curScintilla,SCI_SEARCHINTARGET,4,(LPARAM)(plugin->get_terminating_character)());
-	//This gives me the occurance of the terminating character, need to fetch the string up to 
+	//This gives me the occurence of the terminating character, need to fetch the string up to 
 	//this location
 	Sci_TextRange tr;
 	tr.chrg.cpMin=curPos;
@@ -242,7 +243,7 @@ void insert_doc_string()
 	}
 
 
-	//TODO: think of a proper abstraction to define termination condition for a function of each language
+	//TODO: think of a proper method to define termination condition for a function of each language
 	//TODO: Reorganise the whole code
 
 }

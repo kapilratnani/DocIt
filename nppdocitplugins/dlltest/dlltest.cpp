@@ -46,7 +46,7 @@ void testPlugin(LPCWSTR pluginFile)
         {
             fRunTimeLinkSuccess = TRUE;
 			char *temp=NULL;
-			(ProcGenDocString)("void temp(int a,int b)",5,&temp); 
+			(ProcGenDocString)("function morsetrans($temp)",0,&temp); 
 			printf("%s",temp);
 			printf("%s",(ProcTermChar)());
 			printf("%d",(ProcLangType)());
@@ -58,16 +58,12 @@ void testPlugin(LPCWSTR pluginFile)
     }
 }
 
-struct test
-{
-	int d;
-};
 
 int main( void ) 
 { 
 	WIN32_FIND_DATA ffd;
 	HANDLE hFind=INVALID_HANDLE_VALUE;
-	hFind=FindFirstFile(TEXT(".\\*.dll"),&ffd);
+	hFind=FindFirstFile(TEXT(".\\nppdocitPHP.dll"),&ffd);
 	if(hFind!=INVALID_HANDLE_VALUE)
 	{
 

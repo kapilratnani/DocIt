@@ -14,10 +14,14 @@
 //along with this program; if not, write to the Free Software
 //Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+//Based on phpdoc's format <http://phpdoc.org>
+
+
 #define PCRE_STATIC
 #include"include\pcre.h"
 #define OVECCOUNT 60
 #include<string>
+
 
 enum LangType {L_TXT, L_PHP , L_C, L_CPP, L_CS, L_OBJC, L_JAVA, L_RC,\
 	L_HTML, L_XML, L_MAKEFILE, L_PASCAL, L_BATCH, L_INI, L_NFO, L_USER,\
@@ -39,6 +43,25 @@ std::string get_spaces(int sp_count)
 	return sp;
 }
 
+void trim(std::string *str)
+{
+	for(int i=0;i<(int)str->length();i++)
+	{
+		if(str->at(i)==' ')
+			str->erase(i,1);
+		else
+			break;
+	}
+
+	for(int i=str->length()-1;i>=0;i--)
+	{
+		if(str->at(i)==' ')
+			str->erase(i,1);
+		else
+			break;
+	}
+}
+
 extern "C"
 {
 	__declspec(dllexport) void init()
@@ -55,8 +78,9 @@ extern "C"
 
 	__declspec(dllexport) void gen_doc_string(char *func_string,int indentation,char** out)
 	{
-		pcre *re;
-		pcre *re2;
+		pcre *re_function;
+		pcre *re_function_args;
+
 		const char *error;
 		int erroffset;
 		int ovector[OVECCOUNT];
@@ -66,10 +90,12 @@ extern "C"
 
 		std::string indent_spaces=get_spaces(indentation);
 
-		char *regex="(?P<ret_type>\\w+)(?P<pointer>\\s+|\\s+[*]|[*]\\s+)(?P<func_name>\\w+)\\s*\\((?P<func_args>.*)\\)";
-		re = pcre_compile(
+		char *regex="function\\s+(?P<func_name>\\w+)\\s*\\((?P<func_args>.*)\\)";
+
+
+		re_function = pcre_compile(
 			regex, /* the pattern */
-			0, /* default options */
+			NULL, /* default options */
 			&error, /* for error message */
 			&erroffset, /* for error offset */
 			NULL); /* use default character table */
@@ -77,7 +103,7 @@ extern "C"
 		rc=0;
 		int offset=0;
 		rc = pcre_exec(
-			re, /* the compiled pattern */
+			re_function, /* the compiled pattern */
 			NULL, /* no extra data - we didn't study the pattern */
 			func_string, /* the subject string */
 			strlen(func_string), /* the length of the subject */
@@ -87,10 +113,11 @@ extern "C"
 			OVECCOUNT); /* number of elements in the output
 						vector */
 
+		//return empty comment block if nothing matches
 		if (rc < 0)
 		{
 			doc_string.append(indent_spaces);
-			doc_string.append("/*\r\n");
+			doc_string.append("/**\r\n");
 			doc_string.append(indent_spaces);
 			doc_string.append(" *\r\n");
 			doc_string.append(indent_spaces);
@@ -103,41 +130,26 @@ extern "C"
 			doc_string.append(" *\r\n");
 			doc_string.append(indent_spaces);
 			doc_string.append(" */\r\n");
-			
+
 			*out=new char[doc_string.size()+1];
 			strncpy_s(*out,doc_string.size()+1,doc_string.c_str(),doc_string.size()+1);
 			return;
 		}
 
 		const char *ret=NULL;
-		pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"func_name",&ret);
 		doc_string.append(indent_spaces);
-		doc_string.append("/*\r\n");
+		doc_string.append("/**\r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" * Name         : ");
-		doc_string.append(ret);
-		doc_string.append("\r\n");
+		doc_string.append(" * \r\n");
 		doc_string.append(indent_spaces);
-		doc_string.append(" *\r\n");
-
-		pcre_free_substring(ret);
-
-		doc_string.append(indent_spaces);
-		doc_string.append(" * Synopsis     : ");
-		pcre_get_substring(func_string,ovector,OVECCOUNT,0,&ret);
-		doc_string.append(ret);
-		doc_string.append("\r\n");
-		pcre_free_substring(ret);
-
-		doc_string.append(indent_spaces);
-		doc_string.append(" *\r\n");
+		doc_string.append(" * \r\n");
 
 
-		pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"func_args",&ret);
+		pcre_get_named_substring(re_function,func_string,ovector,OVECCOUNT,"func_args",&ret);
 
 		//parse func_args and insert in each line
-		char *regex2="(?P<arg_type>struct\\s+\\w+|const\\s+\\w+|\\w+)(?P<pointer>\\s+|\\s+[*]|[*]\\s+)(?P<arg_name>\\w+|\\(\\*(?P<p_func_name>\\w+)\\)(\\((?P<p_func_args>.*)\\)))";
-		re2 = pcre_compile(
+		char *regex2="\\$(?P<arg_name>[^,=]*)";
+		re_function_args = pcre_compile(
 			regex2, /* the pattern */
 			0, /* default options */
 			&error, /* for error message */
@@ -147,7 +159,7 @@ extern "C"
 		rc1=0;
 		int offset1=0;
 		rc1 = pcre_exec(
-			re2, /* the compiled pattern */
+			re_function_args, /* the compiled pattern */
 			NULL, /* no extra data - we didn't study the pattern */
 			ret, /* the subject string */
 			strlen(ret), /* the length of the subject */
@@ -156,29 +168,22 @@ extern "C"
 			ovector2, /* output vector for substring information */
 			OVECCOUNT); /* number of elements in the output
 						vector */
-		if(rc1>0){
-			doc_string.append(indent_spaces);	
-			doc_string.append(" * Arguments    : ");
+		if(rc1>0){	
 			while(rc1!=-1){
 
 				const char *ret1=NULL;
-				pcre_get_named_substring(re2,ret,ovector2,OVECCOUNT,"arg_type",&ret1);
+
+				pcre_get_named_substring(re_function_args,ret,ovector2,OVECCOUNT,"arg_name",&ret1);
+				doc_string.append(indent_spaces);
+				doc_string.append(" * @param <type> ");
 				doc_string.append(ret1);
-				doc_string.append(" ");
+				doc_string.append(" \r\n");
 				pcre_free_substring(ret1);
 
-				pcre_get_named_substring(re2,ret,ovector2,OVECCOUNT,"pointer",&ret1);
-				doc_string.append(ret1);
-				pcre_free_substring(ret1);
-
-				pcre_get_named_substring(re2,ret,ovector2,OVECCOUNT,"arg_name",&ret1);
-				doc_string.append(ret1);
-				doc_string.append(" : ");
-				pcre_free_substring(ret1);
 				offset1=ovector2[1];
 
 				rc1 = pcre_exec(
-					re2, /* the compiled pattern */
+					re_function_args, /* the compiled pattern */
 					NULL, /* no extra data - we didn't study the pattern */
 					ret, /* the subject string */
 					strlen(ret), /* the length of the subject */
@@ -192,34 +197,7 @@ extern "C"
 				{
 					break;
 				}
-				doc_string.append("\r\n");
-				doc_string.append(indent_spaces);
-				doc_string.append(" *                ");
 			}
-			doc_string.append("\r\n");
-			doc_string.append(indent_spaces);
-			doc_string.append(" *\r\n");
-		}
-
-		pcre_free_substring(ret);
-
-		doc_string.append(indent_spaces);
-		doc_string.append(" * Description  : \r\n");
-		doc_string.append(indent_spaces);
-		doc_string.append(" * \r\n");
-		doc_string.append(indent_spaces);
-
-		//get return type
-		pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"ret_type",&ret);
-
-		if(strcmp(ret,"void")!=0)
-		{
-			doc_string.append(" * Returns      : ");
-			doc_string.append(ret);
-			pcre_free_substring(ret);
-			pcre_get_named_substring(re,func_string,ovector,OVECCOUNT,"pointer",&ret);
-			doc_string.append(ret);
-			doc_string.append("\r\n");
 		}
 
 		pcre_free_substring(ret);
@@ -227,9 +205,8 @@ extern "C"
 		doc_string.append(indent_spaces);
 		doc_string.append(" */\r\n");
 
-		pcre_free(re);
-		pcre_free(re2);
-		
+		pcre_free(re_function);
+		pcre_free(re_function_args);
 		*out=new char[doc_string.size()+1];
 		strncpy_s(*out,doc_string.size()+1,doc_string.c_str(),doc_string.size()+1);
 		return;
@@ -242,6 +219,6 @@ extern "C"
 
 	__declspec(dllexport) enum LangType get_language_type()
 	{
-		return L_C;
+		return L_PHP;
 	}
 }
