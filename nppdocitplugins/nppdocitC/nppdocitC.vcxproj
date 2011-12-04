@@ -16,6 +16,9 @@
   <ItemGroup>
     <ClInclude Include="include\pcre.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1CE49B1E-93FC-445B-98CB-2602ED80EADB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
