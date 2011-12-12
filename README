@@ -1,0 +1,51 @@
+=================
+DocIt 0.9 Alpha
+by Kapil Ratnani
+=================
+
+A plugin for Notepad++, which aids in documentation. It generates documentation templates for functions. Currently it supports C/CPP, Java and PHP.
+
+============
+Instruction:
+============
+1. Paste the file "NPPDocIt.dll" and the folder "nppdocitplugins" to Notepad++ plugin folder
+2. open a C/CPP/JAVA/PHP file.
+3. Go to a function defination and press "CTRL+ALT+SHIFT+D"
+4. This will insert a documenation string for the function, in a format depending on the language.
+
+==================
+Special Thanks to:
+==================
+Don Ho for Notepad++
+Creators of PCRE
+
+==================
+Latest Updates:
+==================
+---------
+0.9 Alpha
+---------
+-Separate plugin for each type of language
+-Still statically linked pcre
+-Support for PHP
+
+---------
+0.5 Alpha
+---------
+-First Release
+-Statically linked pcre
+-Rough code..not refractored at all
+-Just works..
+-Support for c/cpp and java
+
+TODO:
+-----
+-Add support for Javascript,sql script..etc.. -- Added PHP
+-Refractor the code -- done to some extent
+-Think of a way for expansion -- separate plugin for each language
+-Add support for inserting licenses 
+-try to fully comply with documentation generators
+-add support for more languages -- Added PHP
+-Document the code :P -- done to some extent
+-Add a wiki entry somewhere with instructions to create plugins
+-Work on making more exhaustive api for plugins, so that all types of language can be integrated
