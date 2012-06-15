@@ -38,12 +38,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
+    <LinkIncremental>
+    </LinkIncremental>
     <LibraryPath>.\lib;$(LibraryPath)</LibraryPath>
     <OutDir>.\..\..\Unicode Debug\nppdocitplugins\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>
+    </LinkIncremental>
     <OutDir>.\..\..\Unicode Release\nppdocitplugins\</OutDir>
     <LibraryPath>.\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>

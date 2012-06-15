@@ -214,8 +214,9 @@ extern "C"
 		{
 			//function throws exceptions, include in doc string
 			char *tmp=new char[strlen(ret)];
-			strcpy(tmp,ret);
-			char *exception_name=strtok(tmp,",");
+			char *next_token;
+			strcpy_s(tmp,strlen(ret),ret);
+			char *exception_name=strtok_s(tmp,",",&next_token);
 			while(exception_name!=NULL)
 			{
 				std::string s(exception_name);
@@ -224,7 +225,7 @@ extern "C"
 				doc_string.append(" * @throws ");
 				doc_string.append(s);
 				doc_string.append("\r\n");
-				exception_name=strtok(NULL,",");
+				exception_name=strtok_s(NULL,",",&next_token);
 			}
 		}
 
