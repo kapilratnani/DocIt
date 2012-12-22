@@ -1,5 +1,5 @@
 =================
-DocIt 0.9 Alpha
+DocIt 0.91 Alpha
 by Kapil Ratnani
 =================
 
@@ -22,6 +22,11 @@ Creators of PCRE
 ==================
 Latest Updates:
 ==================
+---------
+0.91 Alpha
+---------
+-Fixed PHP doc string format
+
 ---------
 0.9 Alpha
 ---------

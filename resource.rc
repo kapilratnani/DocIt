@@ -25,7 +25,7 @@ FONT 8, "Ms Shell Dlg"
     LTEXT           "Author:", IDC_STATIC, 27, 21, 24, 8, SS_LEFT
     LTEXT           "Kapil Ratnani", IDC_STATIC, 104, 21, 43, 8, SS_LEFT
     LTEXT           "Version:", IDC_STATIC, 27, 35, 26, 8, SS_LEFT
-    LTEXT           "0.9 Alpha", IDC_STATIC, 104, 35, 31, 8, SS_LEFT
+    LTEXT           "0.91 Alpha", IDC_STATIC, 104, 35, 31, 8, SS_LEFT
     LTEXT           "Licence:", IDC_STATIC, 27, 48, 28, 8, SS_LEFT
     LTEXT           "GPL", IDC_STATIC, 104, 48, 15, 8, SS_LEFT
     LTEXT           "Special thanks to:", IDC_STATIC, 27, 63, 58, 8, SS_LEFT
@@ -41,8 +41,8 @@ FONT 8, "Ms Shell Dlg"
 //
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 1 VERSIONINFO
-    FILEVERSION     0,9,0,0
-    PRODUCTVERSION  0,9,0,0
+    FILEVERSION     0,9,1,0
+    PRODUCTVERSION  0,9,1,0
     FILEOS          VOS__WINDOWS32
     FILETYPE        VFT_DLL
     FILESUBTYPE     VFT2_UNKNOWN
@@ -56,11 +56,11 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
             VALUE "Comments", "DocIt plugin for Notepad++"
             VALUE "CompanyName", "Kapil Ratnani"
             VALUE "FileDescription", "Notepad++ plugin"
-            VALUE "FileVersion", "0.9 Alpha"
+            VALUE "FileVersion", "0.91 Alpha"
             VALUE "InternalName", "DocIt"
             VALUE "OriginalFilename", "NppDocIt.dll"
             VALUE "ProductName", "DocIt plugin for Notepad++"
-            VALUE "ProductVersion", "0.9 Alpha"
+            VALUE "ProductVersion", "0.91 Alpha"
             VALUE "SpecialBuild", "UNICODE"
         }
     }
