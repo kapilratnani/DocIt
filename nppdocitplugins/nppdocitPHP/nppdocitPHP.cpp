@@ -176,6 +176,8 @@ extern "C"
 				pcre_get_named_substring(re_function_args,ret,ovector2,OVECCOUNT,"arg_name",&ret1);
 				doc_string.append(indent_spaces);
 				doc_string.append(" * @param <type> ");
+				//append $ before parameter
+				doc_string.append("$");
 				doc_string.append(ret1);
 				doc_string.append(" \r\n");
 				pcre_free_substring(ret1);
@@ -202,6 +204,10 @@ extern "C"
 
 		pcre_free_substring(ret);
 
+		doc_string.append(indent_spaces);
+		doc_string.append(" * \r\n");
+		doc_string.append(indent_spaces);
+		doc_string.append(" * @return <type>\r\n");
 		doc_string.append(indent_spaces);
 		doc_string.append(" */\r\n");
 
